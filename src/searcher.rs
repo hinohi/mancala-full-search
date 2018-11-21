@@ -33,6 +33,10 @@ impl Searcher {
         self.db.set(key, best - board.get_score());
         best
     }
+
+    pub fn len(&self) -> usize {
+        self.db.len()
+    }
 }
 
 #[cfg(test)]
@@ -47,5 +51,41 @@ mod tests {
         let mut s = Searcher::new(Box::new(db));
         assert_eq!(s.search(&b), 1);
         assert_eq!(s.db.len(), 2);
+    }
+
+    #[test]
+    fn search_12() {
+        let b = Board::new(1, 2);
+        let db = InMemoryDB::new();
+        let mut s = Searcher::new(Box::new(db));
+        assert_eq!(s.search(&b), 1);
+        assert_eq!(s.db.len(), 2);
+    }
+
+    #[test]
+    fn search_15() {
+        let b = Board::new(1, 5);
+        let db = InMemoryDB::new();
+        let mut s = Searcher::new(Box::new(db));
+        assert_eq!(s.search(&b), -2);
+        assert_eq!(s.db.len(), 3);
+    }
+
+    #[test]
+    fn search_21() {
+        let b = Board::new(2, 1);
+        let db = InMemoryDB::new();
+        let mut s = Searcher::new(Box::new(db));
+        assert_eq!(s.search(&b), 1);
+        assert_eq!(s.db.len(), 8);
+    }
+
+    #[test]
+    fn search_32() {
+        let b = Board::new(3, 2);
+        let db = InMemoryDB::new();
+        let mut s = Searcher::new(Box::new(db));
+        assert_eq!(s.search(&b), 4);
+        assert_eq!(s.db.len(), 1239);
     }
 }
