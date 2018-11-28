@@ -1,10 +1,5 @@
-use std::hash::Hash;
-
-pub trait DB<K, V>
-where
-    K: Hash + Eq,
-{
-    fn get(&self, key: &K) -> Option<&V>;
-    fn set(&mut self, key: K, value: V);
+pub trait DB<V> {
+    fn get(&self, key: &Vec<u8>) -> Option<&V>;
+    fn set(&mut self, key: Vec<u8>, value: V);
     fn len(&self) -> usize;
 }

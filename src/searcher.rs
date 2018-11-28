@@ -3,7 +3,7 @@ use std::boxed::Box;
 use crate::db::DB;
 use crate::game::Board;
 
-type SDB = DB<Vec<u8>, i8>;
+type SDB = DB<i8>;
 
 pub struct Searcher {
     db: Box<SDB>,
