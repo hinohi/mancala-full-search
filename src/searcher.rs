@@ -1,16 +1,16 @@
 use std::boxed::Box;
 
-use crate::db::DB;
+use crate::db::InMemoryDB;
 use crate::game::Board;
 
-type SDB = DB<i8>;
+type SDB = InMemoryDB<Vec<u8>, i8>;
 
 pub struct Searcher {
-    db: Box<SDB>,
+    db: SDB,
 }
 
 impl Searcher {
-    pub fn new(db: Box<SDB>) -> Searcher {
+    pub fn new(db: SDB) -> Searcher {
         Searcher { db }
     }
 
@@ -48,7 +48,7 @@ mod tests {
     fn search_11() {
         let b = Board::new(1, 1);
         let db = InMemoryDB::new();
-        let mut s = Searcher::new(Box::new(db));
+        let mut s = Searcher::new(db);
         assert_eq!(s.search(&b), 1);
         assert_eq!(s.db.len(), 2);
     }
@@ -57,7 +57,7 @@ mod tests {
     fn search_12() {
         let b = Board::new(1, 2);
         let db = InMemoryDB::new();
-        let mut s = Searcher::new(Box::new(db));
+        let mut s = Searcher::new(db);
         assert_eq!(s.search(&b), 1);
         assert_eq!(s.db.len(), 2);
     }
@@ -66,7 +66,7 @@ mod tests {
     fn search_15() {
         let b = Board::new(1, 5);
         let db = InMemoryDB::new();
-        let mut s = Searcher::new(Box::new(db));
+        let mut s = Searcher::new(db);
         assert_eq!(s.search(&b), -2);
         assert_eq!(s.db.len(), 3);
     }
@@ -75,7 +75,7 @@ mod tests {
     fn search_21() {
         let b = Board::new(2, 1);
         let db = InMemoryDB::new();
-        let mut s = Searcher::new(Box::new(db));
+        let mut s = Searcher::new(db);
         assert_eq!(s.search(&b), 1);
         assert_eq!(s.db.len(), 8);
     }
@@ -84,7 +84,7 @@ mod tests {
     fn search_32() {
         let b = Board::new(3, 2);
         let db = InMemoryDB::new();
-        let mut s = Searcher::new(Box::new(db));
+        let mut s = Searcher::new(db);
         assert_eq!(s.search(&b), 4);
         assert_eq!(s.db.len(), 1239);
     }

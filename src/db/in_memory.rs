@@ -1,26 +1,26 @@
 use std::collections::HashMap;
+use std::hash::Hash;
 
-use crate::db::DB;
-
-pub struct InMemoryDB<V> {
-    db: HashMap<Vec<u8>, V>,
+pub struct InMemoryDB<K, V> {
+    db: HashMap<K, V>,
 }
 
-impl<V> DB<V> for InMemoryDB<V> {
-    fn get(&self, key: &Vec<u8>) -> Option<&V> {
-        self.db.get(key)
+impl<K, V> InMemoryDB<K, V>
+where
+    K: Hash + Eq,
+    V: Clone,
+{
+    pub fn new() -> InMemoryDB<K, V> {
+        InMemoryDB { db: HashMap::new() }
     }
-    fn set(&mut self, key: Vec<u8>, value: V) {
+    pub fn get(&self, key: &K) -> Option<V> {
+        self.db.get(key).and_then(|v| Some(v.clone()))
+    }
+    pub fn set(&mut self, key: K, value: V) {
         self.db.insert(key, value);
     }
-    fn len(&self) -> usize {
+    pub fn len(&self) -> usize {
         self.db.len()
-    }
-}
-
-impl<V> InMemoryDB<V> {
-    pub fn new() -> InMemoryDB<V> {
-        InMemoryDB { db: HashMap::new() }
     }
 }
 
@@ -32,7 +32,8 @@ mod tests {
     fn smoke() {
         let mut db = InMemoryDB::new();
         db.set(vec![b'a'], 1);
-        assert_eq!(db.get(&vec![b'a']), Some(&1));
+        assert_eq!(db.get(&vec![b'a']), Some(1));
         assert_eq!(db.get(&vec![b'b']), None);
+        assert_eq!(db.len(), 1);
     }
 }

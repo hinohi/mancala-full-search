@@ -1,5 +1,5 @@
-pub trait DB<V> {
-    fn get(&self, key: &Vec<u8>) -> Option<&V>;
-    fn set(&mut self, key: Vec<u8>, value: V);
+pub trait DB<K, V> {
+    fn get(&self, key: &K) -> Option<V>;
+    fn set(&self, key: K, value: V);
     fn len(&self) -> usize;
 }

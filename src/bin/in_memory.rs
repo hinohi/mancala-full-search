@@ -50,7 +50,7 @@ fn main() {
     let args = parse_args();
     let board = Board::new(args.pit, args.stone);
     let db = InMemoryDB::new();
-    let mut searcher = Searcher::new(Box::new(db));
+    let mut searcher = Searcher::new(db);
     let score = searcher.search(&board);
     println!("score={} num={}", score, searcher.len());
 }
