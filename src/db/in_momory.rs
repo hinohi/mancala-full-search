@@ -1,5 +1,6 @@
 use std::collections::{hash_map::DefaultHasher, HashMap};
 use std::hash::{Hash, Hasher};
+use std::marker::{Send, Sync};
 use std::sync::RwLock;
 
 use crate::db::DB;
@@ -25,6 +26,20 @@ where
     fn len(&self) -> usize {
         self.db.iter().map(|db| db.read().unwrap().len()).sum()
     }
+}
+
+unsafe impl<K, V> Sync for InMemoryDB<K, V>
+where
+    K: Sync,
+    V: Sync,
+{
+}
+
+unsafe impl<K, V> Send for InMemoryDB<K, V>
+where
+    K: Sync,
+    V: Sync,
+{
 }
 
 impl<K, V> InMemoryDB<K, V>

@@ -1,5 +1,3 @@
-use std::boxed::Box;
-
 use crate::db::NoLockDB;
 use crate::game::Board;
 
