@@ -52,6 +52,7 @@ impl fmt::Display for Board {
 
 impl Board {
     pub fn new(pit: usize, stone: u8) -> Board {
+        assert!(pit as i32 * stone as i32 * 2 <= 127);
         Board {
             pit,
             stone,
@@ -105,16 +106,15 @@ impl Board {
         if pos >= self.pit {
             false;
         }
-        self.pits[self.side as usize][pos] != 0
+        self.pits[self.side][pos] != 0
     }
 
     pub fn move_one(&mut self, pos: usize) {
         debug_assert!(self.can_move(pos));
         debug_assert!(!self.is_finished());
-        let num = self.pits[self.side as usize][pos];
-        self.pits[self.side as usize][pos] = 0;
-        let side = self.side as usize;
-        let (side, end_pos) = self.move_stone(side, pos + 1, num as usize);
+        let num = self.pits[self.side][pos];
+        self.pits[self.side][pos] = 0;
+        let (side, end_pos) = self.move_stone(self.side, pos + 1, num as usize);
         if side == self.side {
             if end_pos == self.pit {
                 if !self.is_finished() {

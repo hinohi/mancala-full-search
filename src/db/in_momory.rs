@@ -37,8 +37,8 @@ where
 
 unsafe impl<K, V> Send for InMemoryDB<K, V>
 where
-    K: Sync,
-    V: Sync,
+    K: Send,
+    V: Send,
 {
 }
 
