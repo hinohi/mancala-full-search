@@ -1,5 +1,6 @@
 use std::collections::{hash_map::DefaultHasher, HashMap};
 use std::hash::{Hash, Hasher};
+use std::io::{self, Write};
 use std::marker::{Send, Sync};
 use std::sync::RwLock;
 
@@ -62,6 +63,19 @@ where
     }
 }
 
+impl InMemoryDB<Vec<u8>, i8> {
+    pub fn dump<W: Write>(&self, w: &mut W) -> io::Result<()> {
+        for db in &self.db {
+            for (key, value) in db.read().unwrap().iter() {
+                w.write(key)?;
+                let buf = [(*value as i32 + 128) as u8];
+                w.write(&buf)?;
+            }
+        }
+        Ok(())
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -98,5 +112,14 @@ mod tests {
             assert_eq!(db.get(&i), Some(i % 10));
         }
         assert_eq!(db.len(), 100);
+    }
+
+    #[test]
+    fn dump() {
+        let db = InMemoryDB::<Vec<u8>, i8>::new(3);
+        db.set(vec![0, 1, 2], -3);
+        let mut buf = Vec::new();
+        db.dump(&mut buf);
+        assert_eq!(buf, vec![0, 1, 2, 125]);
     }
 }
