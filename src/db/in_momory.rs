@@ -67,9 +67,9 @@ impl InMemoryDB<Vec<u8>, i8> {
     pub fn dump<W: Write>(&self, w: &mut W) -> io::Result<()> {
         for db in &self.db {
             for (key, value) in db.read().unwrap().iter() {
-                w.write(key)?;
+                w.write_all(key)?;
                 let buf = [(*value as i32 + 128) as u8];
-                w.write(&buf)?;
+                w.write_all(&buf)?;
             }
         }
         Ok(())
