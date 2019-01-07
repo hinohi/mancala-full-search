@@ -1,6 +1,7 @@
 use std::env;
+use std::fs::File;
+use std::io::{self, BufWriter};
 use std::process;
-use std::sync::Arc;
 
 use getopts::Options;
 use mancala_full_search::{Board, InMemoryDB, MultiSearcher};
@@ -11,6 +12,7 @@ struct Args {
     stone: u8,
     thread: usize,
     div: usize,
+    out: Option<String>,
 }
 
 fn print_usage(program: &str, opts: &Options) -> ! {
@@ -27,6 +29,7 @@ fn parse_args() -> Args {
     opt.optopt("s", "stone", "number of stone(required)", "STONE");
     opt.optopt("j", "thread", "number of thread(default 4)", "THREAD");
     opt.optopt("d", "div", "division of DB Lock range(default 16)", "DIV");
+    opt.optopt("o", "output", "output file", "OUTPUT");
     let m = opt
         .parse(&args[1..])
         .unwrap_or_else(|f| panic!(f.to_string()));
@@ -58,14 +61,21 @@ fn parse_args() -> Args {
             .unwrap_or_else(|| "16".to_string())
             .parse::<usize>()
             .unwrap_or_else(|f| panic!(f.to_string())),
+        out: m.opt_str("output"),
     }
 }
 
-fn main() {
+fn main() -> io::Result<()> {
     let args = parse_args();
     let board = Board::new(args.pit, args.stone);
     let db = InMemoryDB::new(args.div);
-    let searcher = MultiSearcher::new(args.thread, Arc::new(db));
+    let searcher = MultiSearcher::new(args.thread, db);
     let score = searcher.search(&board);
     println!("score={} num={}", score, searcher.len());
+    if let Some(out) = args.out {
+        let mut f = BufWriter::new(File::create(out)?);
+        let db = searcher.get_db();
+        db.dump(&mut f)?;
+    }
+    Ok(())
 }

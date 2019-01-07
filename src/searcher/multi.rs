@@ -47,8 +47,11 @@ impl<D> MultiSearcher<D>
 where
     D: DB<Vec<u8>, i8> + Send + Sync + 'static,
 {
-    pub fn new(n: usize, db: Arc<D>) -> MultiSearcher<D> {
-        MultiSearcher { n, db }
+    pub fn new(n: usize, db: D) -> MultiSearcher<D> {
+        MultiSearcher {
+            n,
+            db: Arc::new(db),
+        }
     }
 
     pub fn search(&self, board: &Board) -> i8 {
@@ -68,6 +71,10 @@ where
 
     pub fn len(&self) -> usize {
         self.db.len()
+    }
+
+    pub fn get_db(&self) -> Arc<D> {
+        self.db.clone()
     }
 }
 
