@@ -1,5 +1,7 @@
 mod multi;
 mod single;
+mod width_cut;
 
-pub use crate::searcher::multi::MultiSearcher;
-pub use crate::searcher::single::Searcher;
+pub use self::multi::MultiSearcher;
+pub use self::single::Searcher;
+pub use self::width_cut::WidthCutSearcher;
