@@ -119,7 +119,7 @@ mod tests {
         let db = InMemoryDB::<Vec<u8>, i8>::new(3);
         db.set(vec![0, 1, 2], -3);
         let mut buf = Vec::new();
-        db.dump(&mut buf);
+        db.dump(&mut buf).unwrap();
         assert_eq!(buf, vec![0, 1, 2, 125]);
     }
 }

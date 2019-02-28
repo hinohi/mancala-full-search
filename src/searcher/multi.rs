@@ -87,7 +87,7 @@ mod tests {
     fn search_11() {
         let b = Board::new(1, 1);
         let db = InMemoryDB::new(1);
-        let s = MultiSearcher::new(1, Arc::new(db));
+        let s = MultiSearcher::new(1, db);
         assert_eq!(s.search(&b), 1);
         assert_eq!(s.db.len(), 2);
     }
@@ -96,7 +96,7 @@ mod tests {
     fn search_12() {
         let b = Board::new(1, 2);
         let db = InMemoryDB::new(1);
-        let s = MultiSearcher::new(1, Arc::new(db));
+        let s = MultiSearcher::new(1, db);
         assert_eq!(s.search(&b), 1);
         assert_eq!(s.db.len(), 2);
     }
@@ -105,7 +105,7 @@ mod tests {
     fn search_15() {
         let b = Board::new(1, 5);
         let db = InMemoryDB::new(1);
-        let s = MultiSearcher::new(1, Arc::new(db));
+        let s = MultiSearcher::new(1, db);
         assert_eq!(s.search(&b), -2);
         assert_eq!(s.db.len(), 3);
     }
@@ -114,7 +114,7 @@ mod tests {
     fn search_21() {
         let b = Board::new(2, 1);
         let db = InMemoryDB::new(1);
-        let s = MultiSearcher::new(1, Arc::new(db));
+        let s = MultiSearcher::new(1, db);
         assert_eq!(s.search(&b), 1);
         assert_eq!(s.db.len(), 8);
     }
@@ -123,7 +123,7 @@ mod tests {
     fn search_32() {
         let b = Board::new(3, 2);
         let db = InMemoryDB::new(1);
-        let s = MultiSearcher::new(1, Arc::new(db));
+        let s = MultiSearcher::new(1, db);
         assert_eq!(s.search(&b), 4);
         assert_eq!(s.db.len(), 1239);
     }
@@ -132,7 +132,7 @@ mod tests {
     fn multi_search_32() {
         let b = Board::new(3, 2);
         let db = InMemoryDB::new(1);
-        let s = MultiSearcher::new(4, Arc::new(db));
+        let s = MultiSearcher::new(4, db);
         assert_eq!(s.search(&b), 4);
         assert_eq!(s.db.len(), 1239);
     }
