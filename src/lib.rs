@@ -1,7 +1,3 @@
-mod db;
-mod game;
-mod searcher;
+mod board;
 
-pub use crate::db::*;
-pub use crate::game::Board;
-pub use crate::searcher::*;
+pub use board::*;
