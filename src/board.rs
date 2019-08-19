@@ -189,18 +189,169 @@ pub trait CompactKey {
 }
 
 impl<S: Unsigned + Clone> CompactKey for Board<U1, S> {
-    type Key = u8;
+    type Key = u16;
     fn key(&self) -> Self::Key {
-        (self.self_pits()[0] << 4) + self.opposite_pits()[0]
+        (u16::from(self.self_pits()[0]) << 8) + u16::from(self.opposite_pits()[0])
     }
 }
 
 impl<S: Unsigned + Clone> CompactKey for Board<U2, S> {
-    type Key = u16;
+    type Key = u32;
     fn key(&self) -> Self::Key {
-        let k0 = (self.self_pits()[0] << 4) + self.self_pits()[1];
-        let k1 = (self.opposite_pits()[0] << 4) + self.opposite_pits()[1];
-        (u16::from(k0) << 8) + u16::from(k1)
+        let k0 = {
+            let p = self.self_pits();
+            (u32::from(p[0]) << 8) + u32::from(p[1])
+        };
+        let k1 = {
+            let p = self.opposite_pits();
+            (u32::from(p[0]) << 8) + u32::from(p[1])
+        };
+        (k0 << 16) + k1
+    }
+}
+
+impl<S: Unsigned + Clone> CompactKey for Board<U3, S> {
+    type Key = u64;
+    fn key(&self) -> Self::Key {
+        macro_rules! shift {
+            ($p:ident, $t:ty) => {
+                (<$t>::from($p[0]) << 16) + (<$t>::from($p[1]) << 8) + <$t>::from($p[2])
+            };
+        }
+        let k0 = {
+            let p = self.self_pits();
+            shift!(p, u32)
+        };
+        let k1 = {
+            let p = self.opposite_pits();
+            shift!(p, u32)
+        };
+        (u64::from(k0) << 32) + u64::from(k1)
+    }
+}
+
+impl<S: Unsigned + Clone> CompactKey for Board<U4, S> {
+    type Key = u64;
+    fn key(&self) -> Self::Key {
+        macro_rules! shift {
+            ($p:ident, $t:ty) => {
+                (<$t>::from($p[0]) << 24)
+                    + (<$t>::from($p[1]) << 16)
+                    + (<$t>::from($p[2]) << 8)
+                    + <$t>::from($p[3])
+            };
+        }
+        let k0 = {
+            let p = self.self_pits();
+            shift!(p, u32)
+        };
+        let k1 = {
+            let p = self.opposite_pits();
+            shift!(p, u32)
+        };
+        (u64::from(k0) << 32) + u64::from(k1)
+    }
+}
+
+impl<S: Unsigned + Clone> CompactKey for Board<U5, S> {
+    type Key = u64;
+    fn key(&self) -> Self::Key {
+        macro_rules! shift {
+            ($p:ident, $t:ty) => {
+                (<$t>::from($p[0]) << 24)
+                    + (<$t>::from($p[1]) << 18)
+                    + (<$t>::from($p[2]) << 12)
+                    + (<$t>::from($p[3]) << 6)
+                    + <$t>::from($p[4])
+            };
+        }
+        let k0 = {
+            let p = self.self_pits();
+            shift!(p, u32)
+        };
+        let k1 = {
+            let p = self.opposite_pits();
+            shift!(p, u32)
+        };
+        (u64::from(k0) << 32) + u64::from(k1)
+    }
+}
+
+impl<S: Unsigned + Clone> CompactKey for Board<U6, S> {
+    type Key = u64;
+    fn key(&self) -> Self::Key {
+        macro_rules! shift {
+            ($p:ident, $t:ty) => {
+                (<$t>::from($p[0]) << 25)
+                    + (<$t>::from($p[1]) << 20)
+                    + (<$t>::from($p[2]) << 15)
+                    + (<$t>::from($p[3]) << 10)
+                    + (<$t>::from($p[4]) << 5)
+                    + <$t>::from($p[5])
+            };
+        }
+        let k0 = {
+            let p = self.self_pits();
+            shift!(p, u32)
+        };
+        let k1 = {
+            let p = self.opposite_pits();
+            shift!(p, u32)
+        };
+        (u64::from(k0) << 32) + u64::from(k1)
+    }
+}
+
+impl<S: Unsigned + Clone> CompactKey for Board<U7, S> {
+    type Key = u64;
+    fn key(&self) -> Self::Key {
+        macro_rules! shift {
+            ($p:ident, $t:ty) => {
+                (<$t>::from($p[0]) << 24)
+                    + (<$t>::from($p[1]) << 20)
+                    + (<$t>::from($p[2]) << 16)
+                    + (<$t>::from($p[3]) << 12)
+                    + (<$t>::from($p[4]) << 8)
+                    + (<$t>::from($p[5]) << 4)
+                    + <$t>::from($p[6])
+            };
+        }
+        let k0 = {
+            let p = self.self_pits();
+            shift!(p, u32)
+        };
+        let k1 = {
+            let p = self.opposite_pits();
+            shift!(p, u32)
+        };
+        (u64::from(k0) << 32) + u64::from(k1)
+    }
+}
+
+impl<S: Unsigned + Clone> CompactKey for Board<U8, S> {
+    type Key = u64;
+    fn key(&self) -> Self::Key {
+        macro_rules! shift {
+            ($p:ident, $t:ty) => {
+                (<$t>::from($p[0]) << 28)
+                    + (<$t>::from($p[1]) << 24)
+                    + (<$t>::from($p[2]) << 20)
+                    + (<$t>::from($p[3]) << 16)
+                    + (<$t>::from($p[4]) << 12)
+                    + (<$t>::from($p[5]) << 8)
+                    + (<$t>::from($p[6]) << 4)
+                    + <$t>::from($p[7])
+            };
+        }
+        let k0 = {
+            let p = self.self_pits();
+            shift!(p, u32)
+        };
+        let k1 = {
+            let p = self.opposite_pits();
+            shift!(p, u32)
+        };
+        (u64::from(k0) << 32) + u64::from(k1)
     }
 }
 
@@ -224,14 +375,15 @@ mod tests {
 
     #[test]
     fn smoke_3_1() {
-        let mut board = Board::<U1, U2>::new(true);
+        let mut board = Board::<U3, U1>::new(true);
         assert!(!board.is_finished());
-        assert_eq!(board.list_next().len(), 1);
-        assert_eq!(board.scores(), (2, 2));
+        assert_eq!(board.list_next().len(), 4);
+        assert_eq!(board.scores(), (3, 3));
         let key1 = board.key();
-        board.sow(0);
-        assert!(board.is_finished());
-        assert_eq!(board.scores(), (1, 3));
+        board.sow(2);
+        board.sow(1);
+        assert!(!board.is_finished());
+        assert_eq!(board.scores(), (4, 2));
         let key2 = board.key();
         assert_ne!(key1, key2);
     }
