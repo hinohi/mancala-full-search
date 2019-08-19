@@ -100,6 +100,12 @@ where
         self.pits[0].iter().all(|s| *s == 0) || self.pits[1].iter().all(|s| *s == 0)
     }
 
+    pub fn scores(&self) -> (u8, u8) {
+        let s0 = self.stores[0] + self.pits[0].iter().sum::<u8>();
+        let s1 = self.stores[1] + self.pits[1].iter().sum::<u8>();
+        (s0, s1)
+    }
+
     pub fn self_pits(&self) -> &GenericArray<u8, P> {
         &self.pits[self.side.as_usize()]
     }
@@ -186,5 +192,47 @@ impl<S: Unsigned + Clone> CompactKey for Board<U1, S> {
     type Key = u8;
     fn key(&self) -> Self::Key {
         (self.self_pits()[0] << 4) + self.opposite_pits()[0]
+    }
+}
+
+impl<S: Unsigned + Clone> CompactKey for Board<U2, S> {
+    type Key = u16;
+    fn key(&self) -> Self::Key {
+        let k0 = (self.self_pits()[0] << 4) + self.self_pits()[1];
+        let k1 = (self.opposite_pits()[0] << 4) + self.opposite_pits()[1];
+        (u16::from(k0) << 8) + u16::from(k1)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn smoke_1_2() {
+        let mut board = Board::<U1, U2>::new(true);
+        assert!(!board.is_finished());
+        assert_eq!(board.list_next().len(), 1);
+        assert_eq!(board.scores(), (2, 2));
+        let key1 = board.key();
+        board.sow(0);
+        assert!(board.is_finished());
+        assert_eq!(board.scores(), (1, 3));
+        let key2 = board.key();
+        assert_ne!(key1, key2);
+    }
+
+    #[test]
+    fn smoke_3_1() {
+        let mut board = Board::<U1, U2>::new(true);
+        assert!(!board.is_finished());
+        assert_eq!(board.list_next().len(), 1);
+        assert_eq!(board.scores(), (2, 2));
+        let key1 = board.key();
+        board.sow(0);
+        assert!(board.is_finished());
+        assert_eq!(board.scores(), (1, 3));
+        let key2 = board.key();
+        assert_ne!(key1, key2);
     }
 }
