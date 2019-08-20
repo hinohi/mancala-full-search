@@ -95,6 +95,10 @@ where
         }
     }
 
+    pub fn triple(&self) -> (usize, usize, bool) {
+        (P::to_usize(), S::to_usize(), self.stealing)
+    }
+
     /// 終了判定
     pub fn is_finished(&self) -> bool {
         self.pits[0].iter().all(|s| *s == 0) || self.pits[1].iter().all(|s| *s == 0)
