@@ -1,7 +1,7 @@
+use std::collections::HashSet;
 use std::hash::{Hash, Hasher};
 use std::marker::PhantomData;
 
-use fnv::FnvHashSet;
 use generic_array::{ArrayLength, GenericArray};
 use typenum::{
     consts::{U1, U2, U3, U4, U5, U6, U7, U8},
@@ -106,6 +106,33 @@ where
         (s0, s1)
     }
 
+    pub fn score(&self) -> i8 {
+        let (s0, s1) = self.scores();
+        if self.side == First {
+            s0 as i8 - s1 as i8
+        } else {
+            s1 as i8 - s0 as i8
+        }
+    }
+
+    pub fn store_score(&self) -> i8 {
+        if self.side == First {
+            self.stores[0] as i8 - self.stores[1] as i8
+        } else {
+            self.stores[1] as i8 - self.stores[0] as i8
+        }
+    }
+
+    pub fn pit_score(&self) -> i8 {
+        let s0 = self.pits[0].iter().sum::<u8>();
+        let s1 = self.pits[1].iter().sum::<u8>();
+        if self.side == First {
+            s0 as i8 - s1 as i8
+        } else {
+            s1 as i8 - s0 as i8
+        }
+    }
+
     pub fn self_pits(&self) -> &GenericArray<u8, P> {
         &self.pits[self.side.as_usize()]
     }
@@ -158,8 +185,8 @@ where
     }
 
     /// 今の手番での手を全列挙してそれを行った場合のユニークな盤面のセットを返す
-    pub fn list_next(&self) -> FnvHashSet<Board<P, S>> {
-        let mut set = FnvHashSet::with_capacity_and_hasher(32, Default::default());
+    pub fn list_next(&self) -> HashSet<Board<P, S>> {
+        let mut set = HashSet::with_capacity(7 * 4);
         if self.is_finished() {
             return set;
         }

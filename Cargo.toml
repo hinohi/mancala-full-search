@@ -5,7 +5,8 @@ authors = ["Daiju Nakayama <42.daiju@gmail.com>"]
 edition = "2018"
 
 [dependencies]
-getopts = "*"
+crossbeam = "*"
 generic-array = "*"
 typenum = "*"
 fnv = "*"
+locked-hash = { git = "https://github.com/hinohi/rust-locked-hash.git" }
