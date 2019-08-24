@@ -1,18 +1,18 @@
 use std::collections::hash_map::RandomState;
+use std::fmt::Display;
 use std::hash::BuildHasherDefault;
 
 use fnv::{FnvBuildHasher, FnvHasher};
+use generic_array::ArrayLength;
 use locked_hash::LockedHashMap;
+use typenum::Unsigned;
 
 use crate::{Board, CompactKey};
-use generic_array::ArrayLength;
-use std::fmt::Display;
-use typenum::Unsigned;
 
 type DB<P, S> =
     LockedHashMap<<Board<P, S> as CompactKey>::Key, i8, RandomState, BuildHasherDefault<FnvHasher>>;
 
-fn search_score_worker<P, S>(db: &DB<P, S>, board: Board<P, S>) -> i8
+fn search_worker<P, S>(db: &DB<P, S>, board: Board<P, S>) -> i8
 where
     P: ArrayLength<u8> + Clone,
     S: Unsigned + Clone,
@@ -29,7 +29,7 @@ where
     }
     let mut best = -128;
     for next in board.list_next() {
-        let score = -search_score_worker(db, next);
+        let score = -search_worker(db, next);
         if best < score {
             best = score;
         }
@@ -55,7 +55,7 @@ where
         for _ in 0..threads {
             let board = board.clone();
             scope.spawn(|_| {
-                search_score_worker(&db, board);
+                search_worker(&db, board);
             });
         }
     })
