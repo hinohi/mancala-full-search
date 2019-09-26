@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 use std::hash::{Hash, Hasher};
 use std::marker::PhantomData;
 
@@ -14,7 +14,7 @@ where
     P: ArrayLength<u8>,
 {
     stealing: bool,
-    side: Side,
+    pub side: Side,
     pits: [GenericArray<u8, P>; 2],
     stores: [u8; 2],
     _game: PhantomData<S>,
@@ -211,6 +211,47 @@ where
             }
         }
         set
+    }
+
+    pub fn can_sow(&self, pos: usize) -> Result<(), String> {
+        if pos >= P::to_usize() {
+            return Err(format!(
+                "0から{}の間で指定してください",
+                P::to_usize() - 1
+            ));
+        }
+        if self.pits[self.side.as_usize()][pos] == 0 {
+            return Err("そこには石が残っていません".to_string());
+        }
+        Ok(())
+    }
+
+    /// 次のターンの盤面とその盤面にするために必要な打ち手のペアの一覧を返す
+    /// `std::collections::HashMap` を返すので、返り値を `iter` した順序は毎回異なることを期待して良い
+    pub fn list_next_with_pos(&self) -> HashMap<Board<P, S>, Vec<usize>> {
+        let mut map = HashMap::with_capacity(7 * 4);
+        if self.is_finished() {
+            return map;
+        }
+        let mut stack = Vec::with_capacity(4);
+        stack.push((self.clone(), Vec::with_capacity(1)));
+        while let Some((board, pos_list)) = stack.pop() {
+            for (pos, &s) in board.self_pits().iter().enumerate() {
+                if s == 0 {
+                    continue;
+                }
+                let mut copied = board.clone();
+                let mut copied_pos = pos_list.clone();
+                copied.sow(pos);
+                copied_pos.push(pos);
+                if copied.side == self.side {
+                    stack.push((copied, copied_pos));
+                } else {
+                    map.entry(copied).or_insert(copied_pos);
+                }
+            }
+        }
+        map
     }
 }
 
